@@ -1,0 +1,68 @@
+.fullbody {
+    height: 100vh;
+}
+.lider {
+    background: url('../../assets/lider.jpg');
+    background-size: cover;
+    background-position: right center
+}
+.login-container {
+    width: 65%;
+    border: 1px solid lightgray
+}
+input, select, textarea {
+    width: 80%;
+    border: none;
+    border-bottom: 1px solid lightgray
+}
+.input-container {
+    margin: 8px 0
+}
+.total-container {
+    padding: 20px 0;
+    background-color: white;
+    opacity: 0.89;
+    width: 100%;
+    min-height: 100px;
+    line-height: 1.3
+}
+.chartContainer {
+    padding: 20px 0;
+    background-color: white;
+    opacity: 0.89;
+    width: 100%;
+    min-height: 100px;
+    line-height: 1.3
+}
+
+.amount {
+    font-size: 2em
+}
+.amount-total {
+    color: #a8a8a8 !important;
+    margin-bottom: 20px
+}
+.amount-expenses {
+    color: #D83E0F !important;
+    font-size: 1.6em !important
+}
+.amount-earnings {
+    color: #0080B9 !important;
+    font-size: 1.6em !important
+}
+
+* {
+    font-size: 0.98em
+}
+
+.container-of-all {
+    height: 100vh;
+    width: 60%
+}
+
+.myheader {
+    height: 100px;
+    /*padding: 30px 100px;*/
+    position: fixed;
+    width: 100%
+}

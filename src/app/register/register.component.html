@@ -1,3 +1,32 @@
-<p>
-  register works!
-</p>
+<div class="fullbody uk-flex uk-flex-middle">
+  <div class="uk-align-center login-container">
+    <div style="background-color: white; padding: 20px 0">
+      <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <h5 style="color: #707070 !important">REGISTRAR TRANSACCI&Oacute;N</h5>
+
+        <div class="input-container">
+          <select class="uk-select" [ngModel]="'debit'" name="transactionType">
+            <option [ngValue]="'debit'" selected>Depósito</option>
+            <option [ngValue]="'credit'">Retiro</option>
+          </select>
+        </div>
+        <div class="input-container">
+          <input required class="uk-input" maxlength="30" ngModel name="checkNumber" type="text" placeholder="No. de Factura">
+        </div>
+        <div class="input-container">
+          <input required class="uk-input" maxlength="15" ngModel name="amount" type="text" placeholder="Monto">
+        </div>
+        <div class="input-container">
+          <input required class="uk-input" maxlength="50" ngModel name="title" type="text" placeholder="Concepto">
+        </div>
+        <div class="input-container">
+          <textarea style="resize: none" maxlength="100" ngModel name="notes" class="uk-textarea" rows="5" placeholder="Notas (opcional)"></textarea>
+        </div>
+        <p uk-margin>
+          <button type="reset" class="uk-button uk-margin-right uk-button-secondary">Borrar datos</button>
+          <button type="submit"  class="uk-button uk-button-primary">Guardar</button>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

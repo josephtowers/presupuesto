@@ -1,3 +1,25 @@
-<p>
-  login works!
-</p>
+<div class="uk-grid-collapse uk-child-width-expand@s uk-text-center fullbody">
+  <div>
+    <div class="fullbody leo uk-flex uk-flex-middle">
+      <div class="uk-align-center login-container">
+        <div style="background-color: white; padding: 20px 0">
+          <form>
+            <h5 style="color: #707070 !important">INICIAR SESI&Oacute;N</h5>
+            <img src="../../assets/user.png">
+            <div class="input-container">
+              <input id="user" class="uk-input" type="text" placeholder="Usuario">
+            </div>
+            <div class="input-container">
+              <input id="pass" class="uk-input" type="password" placeholder="Contraseña">
+            </div>
+            <p uk-margin>
+              <button type="reset" class="uk-button uk-margin-right uk-button-default">Borrar datos</button>
+              <button type="button" (click)="login()" class="uk-button uk-button-primary uk-light">Iniciar sesi&oacute;n</button>
+              <button type="button" hidden routerLink="/home/register" class="go-home uk-button uk-button-primary uk-light">Iniciar sesi&oacute;n</button>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

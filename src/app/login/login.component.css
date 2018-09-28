@@ -1,0 +1,24 @@
+.fullbody {
+    height: 100vh;
+}
+.leo {
+    background: url('../../assets/login.jpg');
+    background-size: cover
+}
+:not(.uk-light) {
+    color: black !important
+}
+.login-container {
+    width: 30%;
+}
+img {
+    width: 30%
+}
+input {
+    width: 80%;
+    border: none;
+    border-bottom: 1px solid lightgray
+}
+.input-container {
+    margin: 8px 0
+}

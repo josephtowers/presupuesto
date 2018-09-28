@@ -1,3 +1,45 @@
-<p>
-  home works!
-</p>
+
+<nav class="uk-navbar-container uk-navbar-transparent myheader" uk-navbar>
+    <div class="uk-navbar-right">
+        <label>José Torres | </label>
+        <button class="uk-button-link uk-button" style="margin-right: 120px" (click)="logout()">Cerrar sesi&oacute;n</button>
+        <button class="uk-button-link uk-button leave-home" hidden style="margin-right: 120px" routerLink="/">Cerrar sesi&oacute;n</button>
+      </div>
+</nav>
+<div class="uk-grid-collapse uk-child-width-expand@s uk-text-center" uk-grid>
+  <div>
+    <div class="fullbody lider uk-flex-middle uk-flex uk-flex-column">
+      <div class="container-of-all uk-flex uk-flex-middle uk-flex-around uk-flex-column">
+        <div class="total-container idunno uk-flex uk-flex-column">
+          <label>PRESUPUESTO ACTUAL</label>
+          <label class="amount amount-total">{{totalBudget}}</label>
+          <div class="uk-flex uk-flex-row uk-flex-center">
+            <div class="uk-margin-right uk-flex uk-flex-column">
+              <label>INGRESOS TOTALES</label>
+              <label class="amount amount-earnings">{{totalIncome}}</label>
+            </div>
+            <div class="uk-flex uk-flex-column">
+              <label>GASTOS TOTALES</label>
+              <label class="amount amount-expenses">{{totalExpenses}}</label>
+            </div>
+          </div>
+          <div style="padding-top: 10px">
+            <button type="button" (click)="routeToGo()" class="uk-button uk-button-secondary">Ver hist&oacute;rico</button>
+            <button type="button" hidden routerLink="/home/transactions" class="uk-button uk-button-secondary transactions-router">Ver hist&oacute;rico</button>
+          </div>
+
+        </div>
+        <div class="chartContainer idunno uk-margin">
+          <label>MOVIMIENTOS DE LOS ÚLTIMOS 7 DÍAS</label>
+          <canvas height="100" width="250" baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+            [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div style="max-height: 100vh">
+      <router-outlet></router-outlet>
+  </div>
+</div>
