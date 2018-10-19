@@ -1,10 +1,9 @@
-
 <nav class="uk-navbar-container uk-navbar-transparent myheader" uk-navbar>
-    <div class="uk-navbar-right">
-        <label>José Torres | </label>
-        <button class="uk-button-link uk-button" style="margin-right: 120px" (click)="logout()">Cerrar sesi&oacute;n</button>
-        <button class="uk-button-link uk-button leave-home" hidden style="margin-right: 120px" routerLink="/">Cerrar sesi&oacute;n</button>
-      </div>
+  <div class="uk-navbar-right">
+    <label>{{name}} | </label>
+    <button class="uk-button-link uk-button" style="margin-right: 120px" (click)="logout()">Cerrar sesi&oacute;n</button>
+    <button class="uk-button-link uk-button leave-home" hidden style="margin-right: 120px" routerLink="/">Cerrar sesi&oacute;n</button>
+  </div>
 </nav>
 <div class="uk-grid-collapse uk-child-width-expand@s uk-text-center" uk-grid>
   <div>
@@ -24,8 +23,10 @@
             </div>
           </div>
           <div style="padding-top: 10px">
-            <button type="button" (click)="routeToGo()" class="uk-button uk-button-secondary">Ver hist&oacute;rico</button>
-            <button type="button" hidden routerLink="/home/transactions" class="uk-button uk-button-secondary transactions-router">Ver hist&oacute;rico</button>
+            <button type="button" uk-toggle="target: #register" class="uk-button uk-button-secondary">Registrar transacci&oacute;n</button>
+            <button type="button" hidden routerLink="/home/transactions" class="uk-button uk-button-secondary transactions-router">Ver
+              hist&oacute;rico
+            </button>
           </div>
 
         </div>
@@ -40,6 +41,107 @@
     </div>
   </div>
   <div style="max-height: 100vh">
-      <router-outlet></router-outlet>
+    <div class="fullbody uk-flex">
+      <div class="uk-align-center" style="width: 60%; padding-top: 100px">
+        <h5 style="color: #707070 !important">HIST&Oacute;RICO DE TRANSACCIONES</h5>
+        <div *ngIf="transactions.length == 0">
+          <img src="../../assets/safebox.png" width="90">
+          <p style="font-size: 1.3rem">No hay transacciones</p>
+        </div>
+        <div class="transactions" *ngFor="let t of transactions">
+          <div class="tran-container" uk-toggle="target: #my-id" (click)="showInfo(t)">
+            <div class="uk-flex uk-flex-between">
+              <label class="uk-width-3-5@m" style="text-align: left;">{{t.title}}</label>
+              <label class="uk-width-2-5@m uk-flex uk-flex-middle" style="text-align: right; display: grid">{{t.date}}</label>
+            </div>
+
+            <hr>
+            <div class="uk-flex uk-flex-between">
+              <label style="color: gray">{{t.username}}</label>
+              <label [ngClass]="t.transactionType == 'debit' ? 'issaearning' : 'issaexpense'">{{t.transactionType == 'credit'
+                ? '-' : ''}}{{cashify(t.amount)}}</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div id="my-id" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <th>Información</th>
+        <table class="uk-table uk-table-divider uk-table-justify">
+          <tbody>
+            <tr>
+              <th class="uk-width-1-3">Título</th>
+              <td class="uk-width-2-3">{{currentTransaction.title}}</td>
+            </tr>
+            <tr>
+              <th>No. Factura</th>
+              <td>{{currentTransaction.checkNumber}}</td>
+            </tr>
+            <tr>
+              <th>Monto</th>
+              <td [ngClass]="currentTransaction.transactionType == 'debit' ? 'issaearning' : 'issaexpense'">{{currentTransaction.transactionType
+                == 'credit' ? '-' : ''}}{{cashify(currentTransaction.amount)}}</td>
+            </tr>
+            <tr>
+              <th>Fecha</th>
+              <td>{{currentTransaction.date}}</td>
+            </tr>
+            <tr>
+              <th>Creado por</th>
+              <td>{{currentTransaction.username}}</td>
+            </tr>
+            <tr>
+              <th class=" uk-table-middle">Notas</th>
+              <td>{{currentTransaction.notes || 'No hay notas'}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="uk-flex uk-flex-center" style="width: 100%;">
+          <p uk-margin>
+            <button type="button" (click)="delete()" class="uk-button uk-margin-right uk-button-danger">{{deleteButtonText}}</button>
+            <button type="button" class="uk-button uk-button-primary uk-modal-close">Cerrar</button>
+          </p>
+        </div>
+
+      </div>
+    </div>
+    <div id="register" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <th>Registrar transacci&oacute;n</th>
+        <div class="uk-align-center">
+          <div style="background-color: white;">
+            <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+              <div class="input-container">
+                <select class="uk-select" [ngModel]="'debit'" name="transactionType">
+                  <option [ngValue]="'debit'" selected>Depósito</option>
+                  <option [ngValue]="'credit'">Retiro</option>
+                </select>
+              </div>
+              <div class="input-container">
+                <input required class="uk-input" maxlength="30" ngModel name="checkNumber" type="text" placeholder="No. de Factura">
+              </div>
+              <div class="input-container">
+                <input required class="uk-input" maxlength="15" ngModel name="amount" type="text" placeholder="Monto">
+              </div>
+              <div class="input-container">
+                <input required class="uk-input" maxlength="50" ngModel name="title" type="text" placeholder="Concepto">
+              </div>
+              <div class="input-container">
+                <textarea style="resize: none" maxlength="100" ngModel name="notes" class="uk-textarea" rows="5" placeholder="Notas (opcional)"></textarea>
+              </div>
+              <p style="text-align: center" uk-margin>
+                <button type="reset" class="uk-button uk-margin-right uk-button-secondary reset-form">Borrar datos</button>
+                <button type="submit" class="uk-button uk-button-primary">Guardar</button>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" hidden routerLink="/home/register" class="uk-button uk-button-secondary register-router">Ver hist&oacute;rico</button>
   </div>
 </div>

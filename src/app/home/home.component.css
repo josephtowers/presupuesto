@@ -66,3 +66,38 @@ input, select, textarea {
     position: fixed;
     width: 100%
 }
+label, p, span {
+    color: black
+}
+
+.tran-container {
+    border: 1px solid lightgray;
+    padding: 5px 30px;
+    margin-bottom: 10px;
+    cursor: pointer
+}
+.transactions {
+    width: 100%;
+}
+
+.issaexpense {
+    color: #D83E0F !important;
+}
+
+.issaearning {
+    color: #0080B9 !important;
+}
+hr {
+    margin: 5px 0 !important
+}
+* {
+    font-size: 0.98em
+}
+
+input, select, textarea {
+    width: 90%
+}
+
+.input-container {
+    text-align: center
+}

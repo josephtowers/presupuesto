@@ -1,127 +1,20 @@
 <div class="fullbody uk-flex">
   <div class="uk-align-center" style="width: 60%; padding-top: 100px">
     <h5 style="color: #707070 !important">HIST&Oacute;RICO DE TRANSACCIONES (<button class="uk-button-link uk-button" (click)="goBackInTime()">Volver</button>)</h5>
-    <div class="transactions">
-      <div class="tran-container" uk-toggle="target: #my-id">
+    <div class="transactions" *ngFor="let t of transactions">
+      <div class="tran-container" uk-toggle="target: #my-id" (click)="showInfo(t)">
         <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
+          <label>{{t.title}}</label>
+          <label>{{t.date}}</label>
         </div>
         
         <hr>
         <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
+          <label style="color: gray">{{t.username}}</label>
+          <label [ngClass]="t.transactionType == 'debit' ? 'issaearning' : 'issaexpense'">{{t.transactionType == 'credit' ? '-' : ''}}{{cashify(t.amount)}}</label>
         </div>
       </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
-      <div class="tran-container">
-        <div class="uk-flex uk-flex-between">
-          <label>Gastos miscel&aacute;neos</label>
-          <label>7 Sep 2018 8:24PM</label>
-        </div>
-        
-        <hr>
-        <div class="uk-flex uk-flex-between">
-          <label style="color: gray">José Torres</label>
-          <label class="issaexpense">RD$34,098.00</label>
-        </div>
-      </div>
+      
     </div>
   </div>
 </div>
@@ -132,27 +25,27 @@
         <tbody>
             <tr>
                 <th class="uk-width-1-3">Título</th>
-                <td class="uk-width-2-3">Gastos misceláneos</td>
+                <td class="uk-width-2-3">{{currentTransaction.title}}</td>
             </tr>
             <tr>
                 <th>No. Factura</th>
-                <td>51220</td>
+                <td>{{currentTransaction.checkNumber}}</td>
             </tr>
             <tr>
                 <th>Monto</th>
-                <td>RD$34,098.00</td>
+                <td [ngClass]="currentTransaction.transactionType == 'debit' ? 'issaearning' : 'issaexpense'">{{currentTransaction.transactionType == 'credit' ? '-' : ''}}{{cashify(currentTransaction.amount)}}</td>
             </tr>
             <tr>
                 <th>Fecha</th>
-                <td>7 Sep 2018 8:24PM</td>
+                <td>{{currentTransaction.date}}</td>
             </tr>
             <tr>
                 <th>Creado por</th>
-                <td>José Torres</td>
+                <td>{{currentTransaction.username}}</td>
             </tr>
             <tr>
                 <th class=" uk-table-middle">Notas</th>
-                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</td>
+                <td>{{currentTransaction.notes || 'No hay notas'}}</td>
             </tr>
         </tbody>
     </table>
