@@ -32,9 +32,31 @@ export class HomeComponent implements OnInit {
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Ingresos' },
     { data: [0, 0, 0, 0, 0, 0, 0], label: 'Gastos' }
   ];
-  currentTransaction: Object = {}
+  currentTransaction: Object = {
+    title: "",
+    checkNumber: "0",
+    transactionType: "",
+    amount: "RD$0.00",
+    date: "01/01/1970",
+    username: "",
+    notes: ""
+  }
   deleteButtonText = 'Eliminar'
-  transactions: Observable<any[]>
+  debits: Observable<any[]>
+  credits: Observable<any[]>
+  filters: Object = {
+    transactionType: 'any',
+    greaterThan: 0,
+    lessThan: 0,
+    month: 0,
+    year: 0,
+    fromDate: 0,
+    toDate: 0
+  }
+  months: Observable<any[]>
+  years: Observable<any[]>
+  monthLabels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+
 
   constructor(private router: Router, public afAuth: AngularFireAuth, private http: HttpClient, private tranService: TransactionsService) { }
   routeToGo() {
@@ -49,7 +71,6 @@ export class HomeComponent implements OnInit {
   }
   saveCurrentUser() {
     let user = this.afAuth.auth.currentUser
-    console.log(user)
     let name = ""
     if (user != null) {
       name = user.email.replace('@contoso.com', '')
@@ -62,6 +83,12 @@ export class HomeComponent implements OnInit {
     }
 
   }
+  getDates() {
+    this.http.get('http://localhost:5005/getDates').subscribe((data) => {
+      this.months = data["data"]["months"]
+      this.years = data["data"]["years"]
+    })
+  }
   goBackInTime() {
     TweenMax.staggerTo('.tran-container', 1, {
       x: '500vw', ease: Power4.easeIn, onComplete: () => {
@@ -73,6 +100,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     TweenMax.staggerFrom('.tran-container', 1, { x: '500vw', ease: Power4.easeOut }, 0.05)
     this.getThemTransactions()
+    this.getDates()
     this.saveCurrentUser()
     TweenMax.staggerFrom('.idunno', 1, { x: '-500vw', ease: Power4.easeOut }, 0.2)
     this.http.get('http://localhost:5005/getTableInfo').subscribe((data) => {
@@ -89,10 +117,27 @@ export class HomeComponent implements OnInit {
         { data: data["data"]["expenses"], label: "Gastos" }
       ]
     })
+    let filts = this.filters
+    $('select#amount').on('change', function () {
+      let value = $(this).val().split(':').pop()
+      if (value == ' less' || value == ' greater') {
+        $("input#amountValue").val(0)
+        filts["greaterThan"] = 0
+        filts["lessThan"] = 0
+        $("input#amountValue").prop("disabled", false)
+      }
+      else {
+        $("input#amountValue").val(0)
+        filts["greaterThan"] = 0
+        filts["lessThan"] = 0
+        $("input#amountValue").prop("disabled", true)
+      }
+    });
 
   }
   updateAll() {
     this.getThemTransactions()
+    this.getDates()
     this.http.get('http://localhost:5005/getTableInfo').subscribe((data) => {
       this.totalBudget = this.cashify(data["data"]["total"])
       this.rawTotalBudget = data["data"]["total"]
@@ -109,16 +154,85 @@ export class HomeComponent implements OnInit {
 
   }
   validate(f) {
-    if(this.rawTotalBudget < f.value.amount && f.value.transactionType == 'credit') {
+    /*if (this.rawTotalBudget < f.value.amount && f.value.transactionType == 'credit') {
       UIkit.notification.closeAll()
       UIkit.notification('El presupuesto no puede quedar por debajo de 0', 'danger');
       return false
-    }
+    }*/
     return true
+  }
+  resetFilters() {
+    this.filters = {
+      transactionType: 'any',
+      greaterThan: 0,
+      lessThan: 0,
+      month: 0,
+      year: 0,
+      fromDate: 0,
+      toDate: 0
+    }
+    try {
+      this.getThemTransactions()
+      $(".uk-modal-close-default").click()
+      UIkit.notification.closeAll()
+      UIkit.notification('Se han restablecido los filtros', 'success');
+      $("#resetFilterForm").click()
+      $("input#amountValue").val(0)
+      $("input#amountValue").prop("disabled", true)
+
+    } catch (e) {
+      $(".uk-modal-close-default").click()
+      UIkit.notification.closeAll()
+      UIkit.notification('Ha ocurrido un error. Intente más tarde', 'danger');
+
+    }
+  }
+  onFilter(f: NgForm) {
+    if (f.value.tType != null) {
+      this.filters["transactionType"] = f.value.tType
+    }
+    else {
+      this.filters["transactionType"] = 'any'
+    }
+    if (f.value.comparison == "greater") {
+      this.filters["greaterThan"] = parseInt($("input#amountValue").val())
+      this.filters["lessThan"] = 0
+    }
+    if (f.value.comparison == "less") {
+      this.filters["lessThan"] = parseInt($("input#amountValue").val())
+      this.filters["greaterThan"] = 0
+    }
+    if (f.value.month != null) {
+      this.filters["month"] = f.value.month
+    }
+    else {
+      this.filters["month"] = 0
+    }
+    if (f.value.year != null) {
+      this.filters["year"] = f.value.year
+    }
+    else {
+      this.filters["year"] = 0
+    }
+    try {
+      console.log(this.filters)
+      this.getThemTransactions()
+      $(".uk-modal-close-default").click()
+      UIkit.notification.closeAll()
+      UIkit.notification('Se han aplicado los filtros', 'success');
+
+    } catch (e) {
+      $(".uk-modal-close-default").click()
+      UIkit.notification.closeAll()
+      UIkit.notification('Ha ocurrido un error. Intente más tarde', 'danger');
+
+    }
+
   }
   onSubmit(f: NgForm) {
     f.value.username = this.name
     if (this.validate(f)) {
+      console.log(f.value)
       this.http.post('http://localhost:5005/saveTransaction', f.value)
         .subscribe(res => {
           $(".uk-modal-close-default").click()
@@ -135,7 +249,11 @@ export class HomeComponent implements OnInit {
     }
   }
   cashify(amountIn) {
-
+    let negative = "RD$"
+    if (amountIn < 0) {
+      negative = "-RD$"
+      amountIn *= -1
+    }
     let amount = parseFloat(amountIn).toFixed(2);
     // let amount = parseFloat(this.truncator(amountIn, 2)).toString();
     let splitAmount = amount.split(".")[0];
@@ -145,7 +263,7 @@ export class HomeComponent implements OnInit {
       splitAmount = splitAmount.slice(0, i + 1) + "," + splitAmount.slice(i + 1);
       i = i - 3;
     }
-    return "RD$" + splitAmount + "." + amount.split(".")[1];
+    return negative + splitAmount + "." + amount.split(".")[1];
 
   }
   logout() {
@@ -204,20 +322,20 @@ export class HomeComponent implements OnInit {
     },*/
 
     { // grey
-      backgroundColor: 'rgba(0, 128, 185,1)',
-      borderColor: 'rgba(0, 128, 185,1)',
-      pointBackgroundColor: 'rgba(0, 128, 185,1)',
+      backgroundColor: 'rgba(168, 168, 168, 1)',
+      borderColor: 'rgba(168, 168, 168, 1)',
+      pointBackgroundColor: 'rgba(168, 168, 168, 1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(0, 128, 185,0.8)'
+      pointHoverBorderColor: 'rgba(168, 168, 168, 0.8)'
     },
     { // grey
-      backgroundColor: 'rgba(	216, 62, 15,1)',
-      borderColor: 'rgba(	216, 62, 15,1)',
-      pointBackgroundColor: 'rgba(	216, 62, 15,1)',
+      backgroundColor: 'rgba(	0, 0, 0,1)',
+      borderColor: 'rgba(	0, 0, 0,1)',
+      pointBackgroundColor: 'rgba(	0, 0, 0,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(	216, 62, 15,0.8)'
+      pointHoverBorderColor: 'rgba(	0, 0, 0,0.8)'
     },
     { // dark grey
       backgroundColor: 'rgba(77,83,96,0.2)',
@@ -244,16 +362,14 @@ export class HomeComponent implements OnInit {
 
   // events
   public chartClicked(e: any): void {
-    console.log(e);
   }
 
   public chartHovered(e: any): void {
-    console.log(e);
   }
   getThemTransactions() {
-    this.tranService.getTransactions().subscribe(data => {
-      this.transactions = data["data"]
-      console.log(this.transactions)
+    this.tranService.getTransactions(this.filters).subscribe(data => {
+      this.debits = data["data"]["debits"]
+      this.credits = data["data"]["credits"]
     })
   }
   showInfo(t) {

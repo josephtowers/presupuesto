@@ -36,7 +36,7 @@ export class TransactionsComponent implements OnInit {
     })*/
   }
   getThemTransactions() {
-    this.tranService.getTransactions().subscribe(data => {
+    this.tranService.getTransactions(null).subscribe(data => {
       this.transactions = data["data"]
     })
   }

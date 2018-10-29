@@ -10,15 +10,15 @@
     <div class="fullbody lider uk-flex-middle uk-flex uk-flex-column">
       <div class="container-of-all uk-flex uk-flex-middle uk-flex-around uk-flex-column">
         <div class="total-container idunno uk-flex uk-flex-column">
-          <label>PRESUPUESTO ACTUAL</label>
-          <label class="amount amount-total">{{totalBudget}}</label>
+          <label style="color: #a8a8a8">PRESUPUESTO ACTUAL</label>
+          <label class="amount amount-total" [ngClass]="rawTotalBudget < 0 ? 'negative' : 'positive'">{{totalBudget}}</label>
           <div class="uk-flex uk-flex-row uk-flex-center">
             <div class="uk-margin-right uk-flex uk-flex-column">
-              <label>INGRESOS TOTALES</label>
+              <label style="color: #a8a8a8">INGRESOS TOTALES</label>
               <label class="amount amount-earnings">{{totalIncome}}</label>
             </div>
             <div class="uk-flex uk-flex-column">
-              <label>GASTOS TOTALES</label>
+              <label style="color: #a8a8a8">GASTOS TOTALES</label>
               <label class="amount amount-expenses">{{totalExpenses}}</label>
             </div>
           </div>
@@ -42,13 +42,33 @@
   </div>
   <div style="max-height: 100vh">
     <div class="fullbody uk-flex">
+
       <div class="uk-align-center" style="width: 60%; padding-top: 100px">
-        <h5 style="color: #707070 !important">HIST&Oacute;RICO DE TRANSACCIONES</h5>
-        <div *ngIf="transactions.length == 0">
-          <img src="../../assets/safebox.png" width="90">
-          <p style="font-size: 1.3rem">No hay transacciones</p>
+        <div style="width: 100%; text-align: right">
+          <img uk-toggle="target: #filters" title="Filtrar" src="../../assets/filters.png" style="cursor: pointer">
         </div>
-        <div class="transactions" *ngFor="let t of transactions">
+        <!--<h4 style="color: black !important">HIST&Oacute;RICO DE TRANSACCIONES</h4>-->
+        <h6 style="color: #707070 !important; margin-top: 0;">INGRESOS</h6>
+        <!-- <div *ngIf="debits != null && debits.length == 0">
+          <p style="font-size: 1.3rem">No hay ingresos</p>
+        </div> -->
+        <table class="uk-table uk-table-middle uk-table-divider uk-table-hover" style="text-align: left">
+          <thead>
+            <tr>
+              <th class="uk-table-shrink">Fecha</th>
+              <th class="uk-table-expand">Concepto</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of debits" style="cursor: pointer" uk-toggle="target: #my-id" (click)="showInfo(t)">
+              <td class="uk-width-small" style="text-align: left">{{t.date}}</td>
+              <td style="text-align: left">{{t.title}}</td>
+              <td><strong>{{cashify(t.amount)}}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <!--<div class="transactions" *ngFor="let t of debits">
           <div class="tran-container" uk-toggle="target: #my-id" (click)="showInfo(t)">
             <div class="uk-flex uk-flex-between">
               <label class="uk-width-3-5@m" style="text-align: left;">{{t.title}}</label>
@@ -63,7 +83,28 @@
             </div>
           </div>
 
-        </div>
+        </div>-->
+        <!--Separa aquí-->
+        <h6 style="color: #707070 !important; margin-top: 0;">GASTOS</h6>
+        <!-- <div *ngIf="credits != null && credits.length == 0">
+          <p style="font-size: 1.3rem">No hay gastos</p>
+        </div> -->
+        <table class="uk-table uk-table-middle uk-table-divider uk-table-hover" style="text-align: left">
+          <thead>
+            <tr>
+              <th class="uk-table-shrink">Fecha</th>
+              <th class="uk-table-expand">Concepto</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of credits" style="cursor: pointer" uk-toggle="target: #my-id" (click)="showInfo(t)">
+              <td class="uk-width-small" style="text-align: left">{{t.date}}</td>
+              <td style="text-align: left">{{t.title}}</td>
+              <td><strong>{{cashify(t.amount)}}</strong></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div id="my-id" uk-modal>
@@ -74,28 +115,27 @@
           <tbody>
             <tr>
               <th class="uk-width-1-3">Título</th>
-              <td class="uk-width-2-3">{{currentTransaction.title}}</td>
+              <td class="uk-width-2-3">{{currentTransaction["title"]}}</td>
             </tr>
             <tr>
               <th>No. Factura</th>
-              <td>{{currentTransaction.checkNumber}}</td>
+              <td>{{currentTransaction["checkNumber"]}}</td>
             </tr>
             <tr>
               <th>Monto</th>
-              <td [ngClass]="currentTransaction.transactionType == 'debit' ? 'issaearning' : 'issaexpense'">{{currentTransaction.transactionType
-                == 'credit' ? '-' : ''}}{{cashify(currentTransaction.amount)}}</td>
+              <td [ngClass]="currentTransaction['transactionType'] == 'debit' ? 'issaearning' : 'issaexpense'">{{cashify(currentTransaction["amount"])}}</td>
             </tr>
             <tr>
               <th>Fecha</th>
-              <td>{{currentTransaction.date}}</td>
+              <td>{{currentTransaction["date"]}}</td>
             </tr>
             <tr>
               <th>Creado por</th>
-              <td>{{currentTransaction.username}}</td>
+              <td>{{currentTransaction["username"]}}</td>
             </tr>
             <tr>
               <th class=" uk-table-middle">Notas</th>
-              <td>{{currentTransaction.notes || 'No hay notas'}}</td>
+              <td>{{currentTransaction["notes"] || 'No hay notas'}}</td>
             </tr>
           </tbody>
         </table>
@@ -140,6 +180,65 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+    <div id="filters" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <th>Filtrar datos</th>
+        <form #m="ngForm" (ngSubmit)="onFilter(m)">
+          <table class="uk-table uk-table-justify">
+            <tbody>
+              <tr>
+                <th class="uk-width-1-3">Tipo de transacción</th>
+                <td class="uk-width-2-3">
+                  <select [ngModel]="'any'" name="tType">
+                    <option [ngValue]="'any'">Todos</option>
+                    <option [ngValue]="'debit'">Ingresos</option>
+                    <option [ngValue]="'credit'">Gastos</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th class="uk-width-1-3">Monto</th>
+                <td class="uk-width-2-3 ">
+                  <div style="width: 90%" class="uk-flex uk-flex-row uk-flex-between">
+                    <select id="amount" [ngModel]="'any'" name="comparison">
+                      <option [ngValue]="'any'">Todos</option>
+                      <option [ngValue]="'greater'">Mayor que</option>
+                      <option [ngValue]="'less'">Menor que</option>
+                    </select>
+                    <input ngModel name="amountValue" id="amountValue" class="uk-input" [disabled]="true" placeholder="Valor" style="margin-left: 10px">
+                  </div>
+
+                </td>
+              </tr>
+              <tr>
+                <th class="uk-width-1-3">Mes y año</th>
+                <td class="uk-width-2-3 ">
+                  <div style="width: 90%" class="uk-flex uk-flex-row uk-flex-between">
+                    <select [ngModel]="0" id="month" name="month">
+                      <option [ngValue]="0">Todos</option>
+                      <option *ngFor="let m of months" [ngValue]="m">{{monthLabels[m-1]}}</option>
+                    </select>
+                    <select [ngModel]="0" id="year" name="year" style="margin-left: 10px">
+                      <option [ngValue]="0">Todos</option>
+                      <option *ngFor="let y of years" [ngValue]="y">{{y}}</option>
+                    </select>
+                  </div>
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+          <p style="text-align: center" uk-margin>
+            <button type="button" class="uk-button uk-margin-right uk-button-secondary" (click)="resetFilters()">Restablecer</button>
+            <button type="reset" hidden id="resetFilterForm" class="uk-button uk-margin-right uk-button-secondary">klk</button>
+            <button type="submit" class="uk-button uk-button-primary">Aplicar</button>
+          </p>
+        </form>
+
       </div>
     </div>
     <button type="button" hidden routerLink="/home/register" class="uk-button uk-button-secondary register-router">Ver hist&oacute;rico</button>

@@ -1,5 +1,13 @@
 .fullbody {
     height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto
+}
+.negative {
+    color: red !important
+}
+.positive {
+    color: black
 }
 .lider {
     background: url('../../assets/lider.jpg');
@@ -39,15 +47,14 @@ input, select, textarea {
     font-size: 2em
 }
 .amount-total {
-    color: #a8a8a8 !important;
     margin-bottom: 20px
 }
 .amount-expenses {
-    color: #D83E0F !important;
+    color: #000 !important;
     font-size: 1.6em !important
 }
 .amount-earnings {
-    color: #0080B9 !important;
+    color: #000 !important;
     font-size: 1.6em !important
 }
 
@@ -81,11 +88,11 @@ label, p, span {
 }
 
 .issaexpense {
-    color: #D83E0F !important;
+    color: black !important;
 }
 
 .issaearning {
-    color: #0080B9 !important;
+    color: black !important;
 }
 hr {
     margin: 5px 0 !important

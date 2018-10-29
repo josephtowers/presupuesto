@@ -16,7 +16,20 @@ export class TransactionsService {
   toggleNema() {
     this.helenaChange.next("droga")
   }
-  getTransactions() : Observable<any> {
-    return this.http.get('http://localhost:5005/getTransactions')
+  
+  stringRequest(obj) {
+    let res = "transactionType="
+    res += obj["transactionType"] + "&month="
+    res += obj["month"] + "&year="
+    res += obj["year"] + "&greaterThan="
+    res += obj["greaterThan"] + "&lessThan="
+    res += obj["lessThan"] + "&fromDate="
+    res += obj["fromDate"] + "&toDate="
+    res += obj["toDate"]
+    return res
+  }
+  getTransactions(filters) : Observable<any> {
+    let query = this.stringRequest(filters)
+    return this.http.get('http://localhost:5005/getFilteredTransactions?' + query)
   }
 }
